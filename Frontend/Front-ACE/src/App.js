@@ -1,19 +1,20 @@
 import React from 'react';
-import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import MainContent from './components/MainContent';
-import './App.css';
+import Hero from './components/Hero';
+import Features from './components/Features';
+import Footer from './components/Footer';
+import AnimatedBackground from './components/AnimatedBackground';
 
 function App() {
-  return (
-      <div className="app">
-        <Header />
-        <div className="app-body">
-          <Sidebar />
-          <MainContent />
+    return (
+        <div>
+            <AnimatedBackground />
+            <Header />
+            <Hero />
+            <Features />
+            <Footer />
         </div>
-      </div>
-  );
+    );
 }
 
 export default App;
