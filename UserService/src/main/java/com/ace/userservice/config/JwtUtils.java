@@ -1,6 +1,7 @@
 package com.ace.userservice.config;
 
 import io.jsonwebtoken.Claims;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -14,8 +15,10 @@ import java.util.Set;
 @Component
 public class JwtUtils {
 
-    // Secret key to sign the JWT (must match with Gateway)
-    private static final String SECRET_KEY = "ana"; // Make sure it's the same as used in the Gateway
+    // Use a longer and more secure secret key
+    private static final String SECRET_KEY = "your-secure-long-secret-key-32-characters-or-more"; 
+
+    private static final Key SIGNING_KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
     // Generate a JWT token with username and roles
     public String generateToken(String username, Set<?> roles) {
@@ -25,13 +28,16 @@ public class JwtUtils {
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes(StandardCharsets.UTF_8))
+                .signWith(SIGNING_KEY, SignatureAlgorithm.HS256) // Use the secure signing key
                 .compact();
     }
 
     // Validate a JWT token and extract the claims
     public Claims validateToken(String token) {
-        Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8)); // Get the signing key
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody(); // Validate the token
+        return Jwts.parserBuilder()
+                .setSigningKey(SIGNING_KEY) // Use the secure signing key
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
