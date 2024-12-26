@@ -181,7 +181,7 @@ services:
     build:
       context: ./Frontend # Updated the path to the correct directory
     ports:
-      - "4200:4200"
+      - "80:80"
     container_name: ace-frontend
     networks:
       - ace-network

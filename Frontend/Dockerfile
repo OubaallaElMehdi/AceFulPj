@@ -1,9 +1,11 @@
 # Stage 1: Build React App
-FROM node:16-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json ./
 RUN npm install
 COPY . ./
+COPY default.conf /etc/nginx/conf.d/default.conf
+
 RUN npm run build
 
 # Stage 2: Serve React App with NGINX
