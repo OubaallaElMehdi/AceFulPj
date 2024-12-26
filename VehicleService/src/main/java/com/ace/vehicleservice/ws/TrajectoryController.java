@@ -1,6 +1,7 @@
 package com.ace.vehicleservice.ws;
 
 import com.ace.vehicleservice.entity.Trajectory;
+import com.ace.vehicleservice.service.KafkaProducerService;
 import com.ace.vehicleservice.service.TrajectoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,9 @@ public class TrajectoryController {
     @Autowired
     private TrajectoryService trajectoryService; // Injecting TrajectoryService
 
+    @Autowired
+    private KafkaProducerService kafkaProducerService; // Injecting KafkaProducerService
+
     // Fetch all trajectories for a specific vehicle
     @GetMapping("/vehicle/{vehicleId}")
     public List<Trajectory> getTrajectoriesByVehicle(@PathVariable Long vehicleId) {
@@ -25,26 +29,16 @@ public class TrajectoryController {
                 .collect(Collectors.toList());
     }
 
-
-//    // Add a trajectory
-//    @PostMapping("/trajectories")
-//    public Trajectory addTrajectory(@RequestBody Trajectory trajectory) {
-//        System.out.println("Received trajectory: " + trajectory);
-//        return trajectoryService.save(trajectory);
-//    }
-//    @PostMapping("/trajectories")
-//    public ResponseEntity<Void> saveTrajectories(@RequestBody List<Trajectory> trajectories) {
-//        System.out.println("Received trajectory: " + trajectories);
-//        trajectoryService.saveAll(trajectories);
-//        return ResponseEntity.ok().build();
-//    }
-
     @PostMapping("/trajectories")
     public ResponseEntity<Void> saveTrajectories(@RequestBody List<Trajectory> trajectories) {
         System.out.println("Received a batch of " + trajectories.size() + " trajectories.");
-        trajectoryService.saveAll(trajectories);  // Save all trajectories in one call
+        trajectoryService.saveAll(trajectories); // Save all trajectories in one call
+
+        // Publish each trajectory to a Kafka topic
+        trajectories.forEach(trajectory ->
+                kafkaProducerService.sendMessage("trajectory-topic", trajectory)
+        );
+
         return ResponseEntity.ok().build();
     }
-
-
 }

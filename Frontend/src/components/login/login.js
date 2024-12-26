@@ -6,7 +6,7 @@ import LoginImage from '../../assets/login.png';
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // Ensure this is defined
   const [isLoading, setIsLoading] = useState(false);
 
   const validateInputs = () => {
@@ -90,53 +90,53 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-left">
-        <h2>Login</h2>
-        {errorMessage && (
-          <div className="error-message" style={{ color: 'red', marginBottom: '15px' }}>
-            {errorMessage}
+      <div className="login-container">
+        <div className="login-left">
+          <h2>Login</h2>
+          {errorMessage && (
+              <div className="error-message" style={{ color: 'red', marginBottom: '15px' }}>
+                {errorMessage}
+              </div>
+          )}
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Username</label>
+              <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your username"
+                  required
+              />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+              />
+            </div>
+            <button
+                type="submit"
+                className="login-button"
+                disabled={isLoading}
+            >
+              {isLoading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+          <div className="signup">
+            <p>
+              Don't have an account? <a href="/signup">Sign up</a>
+            </p>
           </div>
-        )}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Username</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="login-button"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-        <div className="signup">
-          <p>
-            Don't have an account? <a href="/signup">Sign up</a>
-          </p>
+        </div>
+        <div className="login-right">
+          <img src={LoginImage} alt="Login Illustration" className="login-image" />
         </div>
       </div>
-      <div className="login-right">
-        <img src={LoginImage} alt="Login Illustration" className="login-image" />
-      </div>
-    </div>
   );
 }
 

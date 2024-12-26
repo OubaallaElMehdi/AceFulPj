@@ -14,4 +14,4 @@ root.render(
 );
 
 
-reportWebVitals();
+reportWebVitals(console.log);

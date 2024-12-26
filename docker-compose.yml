@@ -31,17 +31,17 @@ services:
       - "9092:9092" # Internal and external communication
       - "29092:29092" # Host access
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
     networks:
       - ace-network
-
 
   # Gateway Service
   gateway-service:
@@ -58,6 +58,22 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://ace-eureka:8761/eureka
       - SPRING_PROFILES_ACTIVE=docker
 
+      #   Anomaly Detection Service
+  anomaly-detection-service:
+    build:
+      context: ./AnomalyDetectionService
+    ports:
+      - "5000:5000"
+    container_name: anomaly-detection-service
+    networks:
+      - ace-network
+    depends_on:
+      - kafka
+      - vehicle-service
+    environment:
+      - KAFKA_BROKER=kafka:9092
+      - VEHICLE_SERVICE_URL=http://vehicle-service:8081
+
   # Vehicle Service
   vehicle-service:
     build:
@@ -71,12 +87,14 @@ services:
       - eureka-server
       - vehicle-db
       - gateway-service
+      - kafka
     environment:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://ace-eureka:8761/eureka
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:mysql://vehicle-db:3306/vehicle_service
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka:9092
 
   # User Service
   user-service:
@@ -91,6 +109,7 @@ services:
       - eureka-server
       - user-db
       - gateway-service
+      - kafka
     environment:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://ace-eureka:8761/eureka
       - SPRING_PROFILES_ACTIVE=docker
@@ -111,28 +130,13 @@ services:
       - eureka-server
       - alert-db
       - gateway-service
+      - kafka
     environment:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://ace-eureka:8761/eureka
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:mysql://alert-db:3306/alert_service
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
-
-  # Anomaly Detection Service
-  anomaly-detection-service:
-    build:
-      context: ./AnomalyDetectionService
-    ports:
-      - "5000:5000"
-    container_name: anomaly-detection-service
-    networks:
-      - ace-network
-    depends_on:
-      - kafka
-      - vehicle-service
-    environment:
-      - KAFKA_BROKER=kafka:9092
-      - VEHICLE_SERVICE_URL=http://vehicle-service:8081
 
   # MySQL for Vehicle Service
   vehicle-db:
@@ -145,6 +149,8 @@ services:
       - MYSQL_DATABASE=vehicle_service
     ports:
       - "3307:3306"
+    volumes:
+      - ./vehicle_service.sql:/docker-entrypoint-initdb.d/vehicle_service.sql
 
   # MySQL for User Service
   user-db:
@@ -170,10 +176,10 @@ services:
     ports:
       - "3309:3306"
 
-  # Angular Frontend
+
   ace-frontend:
     build:
-      context: ./AceFrontend
+      context: ./Frontend # Updated the path to the correct directory
     ports:
       - "4200:4200"
     container_name: ace-frontend
@@ -182,8 +188,24 @@ services:
     depends_on:
       - gateway-service
     environment:
-      - NG_PROXY=http://gateway-service:8080
+      - NG_PROXY=http://gateway-service:8080 # Set the gateway URL
+
+
+ #  Angular Frontend
+#  ace-frontend:
+ #   build:
+ #     context: ./AceFrontend
+  #  ports:
+ #     - "4200:4200"
+  ##  container_name: ace-frontend
+  #  networks:
+  #    - ace-network
+  #  depends_on:
+  #    - gateway-service
+   # environment:
+  #    - NG_PROXY=http://gateway-service:8080
 
 networks:
   ace-network:
     driver: bridge
+

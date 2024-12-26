@@ -1,37 +1,36 @@
-# Base Image with Python 3.10
+# Use the official Python 3.10 slim image
 FROM python:3.10-slim
 
-# Set Working Directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Install system dependencies for TensorFlow and Scikit-learn
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    libopenblas-dev \
-    liblapack-dev \
-    libatlas-base-dev \
-    libjpeg-dev \
-    zlib1g-dev \
+# Copy the project files into the container
+COPY . .
+
+COPY ./anomaly_detection/models ./anomaly_detection/models
+
+# Update and install system dependencies (optional but useful for compatibility)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Set Environment Variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
 
-# Copy Requirements File
-COPY ./anomaly_detection/requirements.txt ./requirements.txt
+COPY ./anomaly_detection/models ./anomaly_detection/models
 
-# Install Python Dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Install Python requirements (if you already have a requirements.txt)
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
-# Copy the Application Code
-COPY ./anomaly_detection ./anomaly_detection
-COPY ./anomaly_detection/main.py ./main.py
+# Install additional Python packages
+RUN pip install pandas \
+    && pip install joblib \
+    && pip install flask \
+    && pip install tensorflow \
+    && pip install geopy \
+    && pip install scikit-learn
 
-# Expose Flask Application Port
+# Expose the Flask app port
 EXPOSE 5000
 
-# Run Flask Application using Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+# Command to run the application
+CMD ["python", "main.py"]

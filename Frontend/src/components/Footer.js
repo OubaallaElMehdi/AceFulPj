@@ -1,11 +1,12 @@
 import React from 'react';
+import './Footer.css';
 
-function Footer() {
+const Footer = () => {
     return (
-        <footer className="bg-dark text-white text-center py-3">
+        <footer className="footer">
             <p>© 2024 Trajectory App. All rights reserved.</p>
         </footer>
     );
-}
+};
 
 export default Footer;
