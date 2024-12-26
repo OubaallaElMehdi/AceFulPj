@@ -2,47 +2,23 @@ import Link from 'next/link';
 
 const AuthHeader = () => {
   return (
-    <header style={styles.header}>
-      <div style={styles.logo}>
-        <h1>My Website</h1>
+    <header className="d-flex justify-content-between align-items-center p-3 bg-dark text-white">
+      <div className="fs-3 fw-bold">
+        <h1 className="mb-0">My Website</h1>
       </div>
-      <nav style={styles.nav}>
-        <Link href="/" style={styles.link}>
+      <nav className="d-flex gap-3">
+        <Link href="/" className="btn btn-primary">
           Home
         </Link>
-        <Link href="/auth/login" style={styles.link}>
+        <Link href="/auth/login" className="btn btn-primary">
           Login
         </Link>
-        <Link href="/auth/register" style={styles.link}>
+        <Link href="/auth/register" className="btn btn-primary">
           Register
         </Link>
       </nav>
     </header>
   );
-};
-
-const styles = {
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '10px 20px',
-    backgroundColor: '#333',
-    color: '#fff',
-  },
-  logo: {
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-  },
-  nav: {
-    display: 'flex',
-    gap: '15px',
-  },
-  link: {
-    color: '#fff',
-    textDecoration: 'none',
-    fontSize: '1rem',
-  },
 };
 
 export default AuthHeader;
