@@ -9,13 +9,14 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class AceGatewayApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(AceGatewayApplication.class, args);
     }
 
     @Bean
     DiscoveryClientRouteDefinitionLocator locator(
-            ReactiveDiscoveryClient rdc, DiscoveryLocatorProperties dlp){
-        return new DiscoveryClientRouteDefinitionLocator(rdc,dlp);
+            ReactiveDiscoveryClient rdc, DiscoveryLocatorProperties dlp) {
+        return new DiscoveryClientRouteDefinitionLocator(rdc, dlp);
     }
 }

@@ -2,9 +2,13 @@
 FROM maven:3.9.4-eclipse-temurin-17 as builder
 WORKDIR /app
 
-# Copy project files
+# Copy only the necessary files for dependency resolution
 COPY pom.xml .
-RUN mvn dependency:go-offline
+
+# Resolve dependencies and cache them
+RUN mvn dependency:resolve dependency:resolve-plugins dependency:go-offline -B
+
+# Copy the rest of the project files
 COPY src ./src
 
 # Build the application
@@ -14,7 +18,7 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Copy the built jar
+# Copy the built jar from the builder stage
 COPY --from=builder /app/target/Ace-Gateway-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the application port
