@@ -196,10 +196,8 @@ jobs:
 
       - name: Run SonarQube Analysis for AnomalyDetectionService
         run: |
-          export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64
-          export PATH=$JAVA_HOME/bin:$PATH
           cd AnomalyDetectionService
-          sonar-scanner \
+          JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64 sonar-scanner \
             -Dsonar.projectKey=anomaly-detection-service \
             -Dsonar.sources=. \
             -Dsonar.host.url=http://culturenaturevoyages.com:9000 \
