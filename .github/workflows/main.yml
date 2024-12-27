@@ -180,10 +180,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+      - name: Install Sonar Scanner
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip
+          curl -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+          unzip sonar-scanner.zip
+          sudo mv sonar-scanner-4.8.0.2856-linux /opt/sonar-scanner
+          sudo ln -s /opt/sonar-scanner/bin/sonar-scanner /usr/bin/sonar-scanner
 
       - name: Run SonarQube Analysis for AnomalyDetectionService
         run: |
