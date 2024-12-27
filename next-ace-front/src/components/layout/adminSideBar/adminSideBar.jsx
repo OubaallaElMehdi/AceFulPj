@@ -12,7 +12,8 @@ export default function AdminSideBar() {
 
     const menuItems = [
         { href: "/admin/car", label: "Car", icon: cilCarAlt },
-        { href: "/admin/anomalie", label: "Anomalie", icon: cilWarning },
+        { href: "/admin/anomalieMap", label: "AnomalieMap", icon: cilWarning },
+        { href: "/admin/anomalie", label: "TrajectoireList", icon: cilWarning },
         { href: "/admin/alert", label: "Alert", icon: cilBell },
         { href: "/admin/user", label: "User", icon: cilUser },
     ];

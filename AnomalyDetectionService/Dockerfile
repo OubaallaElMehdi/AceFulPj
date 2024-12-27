@@ -4,11 +4,9 @@ FROM python:3.10-slim
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the project files into the container
-COPY . .
 
-# Ensure the model files are available in the correct directory
-COPY ./anomaly_detection/models ./anomaly_detection/models
+# Install Python requirements (from requirements.txt)
+COPY requirements.txt requirements.txt
 
 # Update and install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -16,12 +14,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python requirements (from requirements.txt)
-COPY requirements.txt requirements.txt
+
 RUN pip install --upgrade pip && pip install -r requirements.txt
+
 
 # Install additional Python packages
 RUN pip install pandas joblib flask tensorflow geopy scikit-learn py-eureka-client
+
+# Copy the project files into the container
+COPY . .
+
+# Ensure the model files are available in the correct directory
+COPY ./anomaly_detection/models ./anomaly_detection/models
+
+
+
 
 # Expose the Flask app port
 EXPOSE 5000

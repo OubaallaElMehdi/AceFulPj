@@ -86,12 +86,13 @@ def classify_anomaly(row, threshold, prev_lat=None, prev_lon=None):
 
 
 # Route: Analyze live data
+# Route: Analyze live data
 @app.route("/analyze", methods=["POST"])
 def analyze_live_data():
     try:
         # Get JSON payload
         data = request.json
-        required_fields = ['latitude', 'longitude', 'speed', 'heading', 'time_diff']
+        required_fields = ['latitude', 'longitude', 'speed', 'heading', 'time_diff', 'car_id']
 
         # Validate input data
         for field in required_fields:
@@ -101,8 +102,21 @@ def analyze_live_data():
         # Convert to DataFrame
         df_live = pd.DataFrame([data])
 
-        # Preprocess the data
+        # Rename 'car_id' to 'vehicle_id' if expected by the model
+        if 'vehicle_id' in scaler.feature_names_in_:
+            df_live['vehicle_id'] = df_live['car_id']
+
+        # Select required model features
         model_features = ['latitude', 'longitude', 'speed', 'heading', 'time_diff']
+        if 'vehicle_id' in scaler.feature_names_in_:
+            model_features.append('vehicle_id')
+
+        # Ensure all required features are present
+        missing_features = [feature for feature in model_features if feature not in df_live.columns]
+        if missing_features:
+            return jsonify({"error": f"Missing features for analysis: {missing_features}"}), 400
+
+        # Preprocess the data
         scaled_data = scaler.transform(df_live[model_features])
 
         # Predict reconstruction error
@@ -113,7 +127,16 @@ def analyze_live_data():
         df_live['is_anomaly'] = reconstruction_error > threshold
 
         if df_live['is_anomaly'].iloc[0]:
-            anomaly_types = classify_anomaly(df_live.iloc[0], threshold)
+            # Fetch previous location for distance anomaly
+            car_id = df_live['car_id'].iloc[0]
+            prev_lat, prev_lon = previous_locations.get(car_id, (None, None))
+
+            # Classify anomaly types
+            anomaly_types = classify_anomaly(df_live.iloc[0], threshold, prev_lat, prev_lon)
+
+            # Update previous location
+            previous_locations[car_id] = (df_live['latitude'].iloc[0], df_live['longitude'].iloc[0])
+
             result = {
                 "is_anomaly": True,
                 "anomaly_types": anomaly_types,
@@ -121,11 +144,14 @@ def analyze_live_data():
             }
             return jsonify(result), 200
         else:
+            # Update previous location even if no anomaly
+            car_id = df_live['car_id'].iloc[0]
+            previous_locations[car_id] = (df_live['latitude'].iloc[0], df_live['longitude'].iloc[0])
+
             return jsonify({"is_anomaly": False, "message": "No anomaly detected."}), 200
     except Exception as e:
         logging.error(f"Error in /analyze endpoint: {e}")
         return jsonify({"error": str(e)}), 500
-
 
 # Route: Simulate real-time trajectory
 @app.route("/simulate", methods=["GET"])
