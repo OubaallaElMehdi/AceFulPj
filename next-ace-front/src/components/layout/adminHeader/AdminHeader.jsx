@@ -20,9 +20,15 @@ export default function AdminHeader() {
         <Link href="/admin/contact" className="btn btn-primary">
           Contact
         </Link>
+        
+        {/*
+
         <Link href="/" onClick={handleLogout} className="btn btn-danger">
           Logout
         </Link>
+        
+        */}
+
       </nav>
     </header>
   );

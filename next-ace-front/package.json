@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@coreui/coreui": "^5.2.0",
+    "@coreui/icons": "^3.0.1",
+    "@coreui/icons-react": "^2.3.0",
+    "@coreui/react": "^5.4.1",
     "@popperjs/core": "^2.11.8",
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
