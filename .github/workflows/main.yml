@@ -175,6 +175,7 @@ jobs:
 
   anomaly_detection_sonar_analysis:
     runs-on: ubuntu-24.04
+    needs: anomaly_detection_compile
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
