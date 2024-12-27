@@ -114,3 +114,38 @@ jobs:
         run: |
           cd VehicleService
           mvn sonar:sonar -Dsonar.projectKey=vehicle-service -Dsonar.projectName='vehicle-service' -Dsonar.host.url=http://culturenaturevoyages.com:9000 -Dsonar.token=sqp_0696bc1ea9331ef2177ffb667c2d1becb92d4347 -Dsonar.java.binaries=target -DskipTests
+
+  # Next.js Frontend Jobs
+  nextjs_build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install and Build Next.js Project
+        run: |
+          cd next-ace-front
+          npm install
+          npm run build
+
+  nextjs_sonar_analysis:
+    runs-on: ubuntu-24.04
+    needs: nextjs_build
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Run SonarQube Analysis for Next.js Project
+        run: |
+          cd next-ace-front
+          npm install -g sonar-scanner && npx sonar-scanner -Dsonar.projectKey=next-ace-front -Dsonar.sources=. -Dsonar.host.url=http://culturenaturevoyages.com:9000 -Dsonar.token=sqp_6682ff38a1d28ece3d90dfda844541fb43e89453
