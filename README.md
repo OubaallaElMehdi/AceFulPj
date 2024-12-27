@@ -340,6 +340,9 @@
            docker-compose up --build
        * Configurez Jenkins pour exécuter les pipelines de construction et de déploiement.
    # 3.  Déploiement
-          * Utilisez Docker Compose pour déployer en local.
-          * Pour une mise en production, utilisez Kubernetes pour une gestion avancée des conteneurs.
+       * Utilisez Docker Compose pour déployer en local ou sur un serveur distant.
+       * Le projet est hébergé sur un serveur distant et accessible via le domaine :
+            http://culturenaturevoyages.com:3000
+
+
      
