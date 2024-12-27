@@ -21,6 +21,7 @@ public class AuthService {
         this.jwtUtils = jwtUtils;
     }
 
+
     public String authenticate(String username, String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Invalid username or password"));
@@ -35,10 +36,15 @@ public class AuthService {
     public User saveUser(User user) {
         return userRepository.save(user);
     }
+
+
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+
+
 
 
 }

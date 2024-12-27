@@ -1,18 +1,21 @@
 package com.ace.userservice.entity;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity
+@Table(name = "users") // Explicit table name for clarity
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false) // Username must be unique and non-null
     private String username;
+
+    @Column(nullable = false) // Password must be non-null
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -23,7 +26,7 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -55,5 +58,4 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-
 }

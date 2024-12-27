@@ -3,24 +3,24 @@ package com.ace.userservice.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "roles") // Explicit table name for clarity
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false) // Role name must be unique and non-null
     private String name;
 
-    // Default constructor (required by JPA)
-    public Role() {
-    }
+    // Default constructor required by JPA
+    public Role() {}
 
-    // Constructor with name argument
     public Role(String name) {
         this.name = name;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }

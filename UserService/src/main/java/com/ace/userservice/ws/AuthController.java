@@ -71,27 +71,27 @@ public class AuthController {
             String username = request.get("username");
             String password = request.get("password");
 
-            // Validate input
             if (username == null || username.isEmpty()) {
-                return ResponseEntity.badRequest().body("Username cannot be null or empty.");
+                return ResponseEntity.badRequest().body(Map.of("message", "Username cannot be null or empty."));
             }
             if (password == null || password.isEmpty()) {
-                return ResponseEntity.badRequest().body("Password cannot be null or empty.");
+                return ResponseEntity.badRequest().body(Map.of("message", "Password cannot be null or empty."));
             }
 
-            // Find user and validate password
             User user = userService.findByUsername(username);
             if (user == null) {
-                return ResponseEntity.status(404).body("User not found.");
+                return ResponseEntity.status(404).body(Map.of("message", "User not found."));
             }
+
             if (passwordEncoder.matches(password, user.getPassword())) {
                 String token = jwtUtils.generateToken(username, user.getRoles());
                 return ResponseEntity.ok(Map.of("token", token, "roles", user.getRoles()));
             } else {
-                return ResponseEntity.status(401).body("Invalid credentials.");
+                return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials."));
             }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("An error occurred during login: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(Map.of("message", "An error occurred during login."));
         }
     }
+
 }

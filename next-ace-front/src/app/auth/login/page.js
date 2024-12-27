@@ -3,63 +3,68 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import AuthService from "@/services/AuthService";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
+    try {
+      const data = await AuthService.login(username, password);
 
-    // Check credentials
-    if (email === "admin@gmail.com" && password === "123") {
-      router.push("/admin/home");
+      // Save token and role in cookies
+      Cookies.set("token", data.token);
       Cookies.set("loggedin", true);
-      console.log(Cookies.get("loggedin"));
-    } 
-    else if (email === "client@gmail.com" && password === "123") {
-      router.push("/client/home");
-      Cookies.set("loggedin", true);
-    } 
-    else {
-      alert("Invalid credentials");
+
+      // Role-based redirection
+      if (data.roles.includes("ROLE_ADMIN")) {
+        router.push("/admin/home");
+      } else if (data.roles.includes("ROLE_USER")) {
+        router.push("/client/home");
+      } else {
+        setError("Unauthorized role");
+      }
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
-    <div className="container mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: "400px" }}>
-      <h1 className="text-center mb-4">Login</h1>
-      <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-        <div>
-          <label htmlFor="email" className="form-label">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="form-control"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="form-label">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="form-control"
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary w-100">
-          Login
-        </button>
-      </form>
-    </div>
+      <div className="container mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: "400px" }}>
+        <h1 className="text-center mb-4">Login</h1>
+        <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
+          {error && <div className="alert alert-danger">{error}</div>}
+          <div>
+            <label htmlFor="username" className="form-label">Username:</label>
+            <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="form-control"
+                required
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="form-label">Password:</label>
+            <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-control"
+                required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100">
+            Login
+          </button>
+        </form>
+      </div>
   );
 };
 
