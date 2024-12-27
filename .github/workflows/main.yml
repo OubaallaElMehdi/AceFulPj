@@ -1,4 +1,4 @@
-name: user-service
+name: ACE Pipline
 
 on:
   push:
@@ -7,9 +7,8 @@ on:
   pull_request:
 
 jobs:
-  sonar_analysis:
+  user_service_analysis:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -20,17 +19,44 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Compile the Project
+      - name: Compile the UserService Project
         run: |
           cd UserService
           mvn clean compile -DskipTests
 
-      - name: Verify and Package
+      - name: Verify and Package UserService
         run: |
           cd UserService
           mvn verify package -DskipTests
 
-      - name: Run SonarQube Analysis
+      - name: Run SonarQube Analysis for UserService
         run: |
           cd UserService
-          mvn sonar:sonar -Dsonar.projectKey=user-service -Dsonar.projectName='user-service' -Dsonar.host.url=http://147.79.115.242:9000 -Dsonar.token=sqp_c6227f7f672e096aaa4b9104de81e72127fd93bf -DskipTests
+          mvn sonar:sonar -Dsonar.projectKey=user-service -Dsonar.projectName='user-service' -Dsonar.host.url=http://culturenaturevoyages.com:9000 -Dsonar.token=sqp_c6227f7f672e096aaa4b9104de81e72127fd93bf -DskipTests
+
+  alert_service_analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Compile the AlertService Project
+        run: |
+          cd AlertService
+          mvn clean compile -DskipTests
+
+      - name: Verify and Package AlertService
+        run: |
+          cd AlertService
+          mvn verify package -DskipTests
+
+      - name: Run SonarQube Analysis for AlertService
+        run: |
+          cd AlertService
+          mvn sonar:sonar -Dsonar.projectKey=alert-service -Dsonar.projectName='alert-service' -Dsonar.host.url=http://culturenaturevoyages.com:9000 -Dsonar.token=sqp_69586d07e81a9d0db0405ed899c1a6542dd1b7b3 -DskipTests
