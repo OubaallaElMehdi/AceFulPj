@@ -175,7 +175,6 @@ jobs:
 
   anomaly_detection_sonar_analysis:
     runs-on: ubuntu-24.04
-    needs: anomaly_detection_compile
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -203,3 +202,5 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=http://culturenaturevoyages.com:9000 \
             -Dsonar.token=sqp_7fe7ca5ab55f7e7e88a1ec68fba83729e6dbf53c
+        env:
+          JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64
