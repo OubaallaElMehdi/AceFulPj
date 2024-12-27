@@ -27,7 +27,9 @@ RUN pip install pandas \
     && pip install flask \
     && pip install tensorflow \
     && pip install geopy \
-    && pip install scikit-learn
+    && pip install scikit-learn \
+
+RUN pip install py-eureka-client
 
 # Expose the Flask app port
 EXPOSE 5000
