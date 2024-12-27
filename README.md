@@ -1,11 +1,11 @@
 # Détection de localisation anormale avec des algorithmes de machine learning
   # Table de matière:
-    I.	Introduction
+    I. Introduction
       1.	Contexte et objectifs
        1.1 Objectifs principaux
       2.  Vue d'ensemble du projet
       3.  Cas d'utilisation
-    II.	Architecture Technique
+    II. Architecture Technique
       1.	Structure du projet
       2.	Technologies utilisées
       3.	Conteneurisation et déploiement 
