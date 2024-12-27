@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import AuthService from "@/services/AuthService";
+import AuthService from "@/services/AuthService"; // Adjust the path based on your project structure
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -13,17 +13,21 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // Clear any previous errors
     try {
       const data = await AuthService.login(username, password);
 
-      // Save token and role in cookies
+      // Save the token in cookies
       Cookies.set("token", data.token);
       Cookies.set("loggedin", true);
 
+      // Extract role names from the roles array
+      const roleNames = data.roles.map((role) => role.name);
+
       // Role-based redirection
-      if (data.roles.includes("ROLE_ADMIN")) {
+      if (roleNames.includes("ROLE_ADMIN")) {
         router.push("/admin/home");
-      } else if (data.roles.includes("ROLE_USER")) {
+      } else if (roleNames.includes("ROLE_USER")) {
         router.push("/client/home");
       } else {
         setError("Unauthorized role");
