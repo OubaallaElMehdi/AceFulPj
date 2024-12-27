@@ -5,11 +5,15 @@ import com.ace.vehicleservice.entity.Trajectory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface TrajectoryRepository extends JpaRepository<Trajectory, Long> {
     List<Trajectory> findByVehicleId(Long vehicleId);
     Page<Trajectory> findByVehicleId(Long vehicleId, Pageable pageable);
+
+
+    List<Trajectory> findByVehicleIdAndTimestampBetween(Long vehicleId, LocalDateTime startDate, LocalDateTime endDate);
 
 }

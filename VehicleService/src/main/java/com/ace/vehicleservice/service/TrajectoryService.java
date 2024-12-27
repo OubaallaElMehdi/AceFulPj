@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -26,5 +28,9 @@ public class TrajectoryService {
     }
     public void saveAll(List<Trajectory> trajectories) {
         trajectoryRepository.saveAll(trajectories);
+    }
+
+    public List<Trajectory> getTrajectoriesByVehicleIdAndDate(Long vehicleId, LocalDateTime startDate, LocalDateTime endDate) {
+        return trajectoryRepository.findByVehicleIdAndTimestampBetween(vehicleId, startDate, endDate);
     }
 }

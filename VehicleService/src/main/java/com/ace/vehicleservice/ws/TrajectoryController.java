@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -94,6 +95,21 @@ public class TrajectoryController {
         }, 0, 1, TimeUnit.SECONDS); // Send a trajectory every second
 
         return emitter;
+    }
+
+    @GetMapping("/vehicle/{vehicleId}/date/{date}")
+    public List<Trajectory> getTrajectoriesByVehicleAndDate(
+            @PathVariable Long vehicleId,
+            @PathVariable String date) {
+        LocalDateTime startDate = LocalDateTime.parse(date + "T00:00:00");
+        LocalDateTime endDate = LocalDateTime.parse(date + "T23:59:59");
+
+        List<Trajectory> trajectories = trajectoryService.getTrajectoriesByVehicleIdAndDate(vehicleId, startDate, endDate);
+
+        // Avoid recursive nesting in the response
+        trajectories.forEach(trajectory -> trajectory.setVehicle(null));
+
+        return trajectories;
     }
 }
 
