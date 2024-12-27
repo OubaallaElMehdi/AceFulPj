@@ -149,3 +149,26 @@ jobs:
         run: |
           cd next-ace-front
           npm install -g sonar-scanner && npx sonar-scanner -Dsonar.projectKey=next-ace-front -Dsonar.sources=. -Dsonar.host.url=http://culturenaturevoyages.com:9000 -Dsonar.token=sqp_6682ff38a1d28ece3d90dfda844541fb43e89453
+
+  # AnomalyDetectionService Compile Job
+  anomaly_detection_compile:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          cd AnomalyDetectionService
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compile Python Files
+        run: |
+          cd AnomalyDetectionService
+          python -m py_compile *.py */*.py
