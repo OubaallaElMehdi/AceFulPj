@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./Register.module.css";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -23,51 +22,57 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <div className={styles.container}>
-        <h1>Register</h1>
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <label htmlFor="username">Username:</label>
+    <div className="container mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: "500px" }}>
+      <h1 className="text-center mb-4">Register</h1>
+      <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
+        <div>
+          <label htmlFor="username" className="form-label">Username:</label>
           <input
             type="text"
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className={styles.input}
+            className="form-control"
             required
           />
-          <label htmlFor="email">Email:</label>
+        </div>
+        <div>
+          <label htmlFor="email" className="form-label">Email:</label>
           <input
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={styles.input}
+            className="form-control"
             required
           />
-          <label htmlFor="password">Password:</label>
+        </div>
+        <div>
+          <label htmlFor="password" className="form-label">Password:</label>
           <input
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className={styles.input}
+            className="form-control"
             required
           />
-          <label htmlFor="confirmPassword">Confirm Password:</label>
+        </div>
+        <div>
+          <label htmlFor="confirmPassword" className="form-label">Confirm Password:</label>
           <input
             type="password"
             id="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className={styles.input}
+            className="form-control"
             required
           />
-          <button type="submit" className={styles.button}>
-            Register
-          </button>
-        </form>
-      </div>
+        </div>
+        <button type="submit" className="btn btn-success w-100">
+          Register
+        </button>
+      </form>
     </div>
   );
 };

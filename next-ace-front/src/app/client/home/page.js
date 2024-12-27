@@ -1,13 +1,11 @@
 "use client";
 
-import styles from "./ClientHomePage.module.css";
-
-export default function AdminHomePage() {
+export default function ClientHomePage() {
   return (
-    <div>
-      <main className={styles.main}>
-        <h1>Welcome to the Client Home Page</h1>
-        <p>This is the main content of the Client Home Page.</p>
+    <div className="container mt-5">
+      <main className="text-center">
+        <h1 className="text-primary mb-4">Welcome to the Client Home Page</h1>
+        <p className="lead">This is the main content of the Client Home Page.</p>
       </main>
     </div>
   );
