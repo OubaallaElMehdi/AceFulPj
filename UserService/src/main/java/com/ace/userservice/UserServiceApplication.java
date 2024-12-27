@@ -23,6 +23,9 @@ public class UserServiceApplication {
     }
 
 
+
+
+
     @Bean
     public CommandLineRunner setupDefaultUsers(
             UserRepository userRepository,

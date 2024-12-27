@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/trajectories")
+@CrossOrigin(origins = "*") // Allow all origins
 public class TrajectoryController {
 
     @Autowired

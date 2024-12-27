@@ -25,19 +25,14 @@ public class VehicleController {
     @PostMapping
     public Vehicle createVehicle(@RequestBody Vehicle vehicle) {
         Vehicle createdVehicle = vehicleService.createVehicle(vehicle);
-
-        // Send the created vehicle details to Kafka
         kafkaProducerService.sendMessage("vehicle-topic", createdVehicle);
-
         return createdVehicle;
     }
-
 
     @GetMapping
     public List<Vehicle> getAllVehicles() {
         List<Vehicle> vehicles = vehicleService.findAll();
         kafkaProducerService.sendMessage("vehicle-topic", "Fetched all vehicles");
-
         return vehicles;
     }
 
@@ -47,10 +42,7 @@ public class VehicleController {
                 .stream()
                 .map(vehicle -> new VehicleDTO(vehicle.getId(), vehicle.getName()))
                 .collect(Collectors.toList());
-
-        // Send a message to Kafka (e.g., log the fetch operation)
         kafkaProducerService.sendMessage("vehicle-topic", "Fetched all vehicle IDs");
-
         return vehicleDTOs;
     }
 
@@ -61,5 +53,4 @@ public class VehicleController {
         Pageable pageable = PageRequest.of(page, size);
         return vehicleService.findAll(pageable);
     }
-
 }
