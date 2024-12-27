@@ -1,0 +1,29 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  sonar_analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Java environment
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Navigate to the userService folder and run the Maven command
+      - name: Run SonarQube Analysis
+        run: |
+          cd UserService
+          mvn clean verify sonar:sonar -Dsonar.projectKey=user-service -Dsonar.projectName='user-service' -Dsonar.token=sqp_862c9f2067fd262b055ea668fc002d028c7dc9d2 -DskipTests
