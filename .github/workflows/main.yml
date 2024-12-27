@@ -1,0 +1,36 @@
+name: user-service
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  sonar_analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Compile the Project
+        run: |
+          cd UserService
+          mvn clean compile -DskipTests
+
+      - name: Verify and Package
+        run: |
+          cd UserService
+          mvn verify package -DskipTests
+
+      - name: Run SonarQube Analysis
+        run: |
+          cd UserService
+          mvn sonar:sonar -Dsonar.projectKey=user-service -Dsonar.projectName='user-service' -Dsonar.host.url=http://147.79.115.242:9000 -Dsonar.token=sqp_c6227f7f672e096aaa4b9104de81e72127fd93bf -DskipTests
