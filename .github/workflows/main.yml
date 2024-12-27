@@ -25,7 +25,7 @@ jobs:
           mvn clean verify package -DskipTests
 
   user_service_sonar_analysis:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: user_service_build
     steps:
       - name: Checkout Code
@@ -40,10 +40,10 @@ jobs:
       - name: Run SonarQube Analysis for UserService
         run: |
           cd UserService
-          mvn sonar:sonar -Dsonar.projectKey=user-service -Dsonar.projectName='user-service' -Dsonar.host.url=http://culturenaturevoyages.com:9000 -Dsonar.token=sqp_c6227f7f672e096aaa4b9104de81e72127fd93bf -DskipTests
+          mvn sonar:sonar -Dsonar.projectKey=user-service -Dsonar.projectName='user-service' -Dsonar.host.url=http://culturenaturevoyages.com:9000 -Dsonar.token=sqp_c6227f7f672e096aaa4b9104de81e72127fd93bf -Dsonar.java.binaries=target -DskipTests
 
   alert_service_build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -60,7 +60,7 @@ jobs:
           mvn clean verify package -DskipTests
 
   alert_service_sonar_analysis:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: alert_service_build
     steps:
       - name: Checkout Code
@@ -75,4 +75,4 @@ jobs:
       - name: Run SonarQube Analysis for AlertService
         run: |
           cd AlertService
-          mvn sonar:sonar -Dsonar.projectKey=alert-service -Dsonar.projectName='alert-service' -Dsonar.host.url=http://culturenaturevoyages.com:9000 -Dsonar.token=sqp_69586d07e81a9d0db0405ed899c1a6542dd1b7b3 -DskipTests
+          mvn sonar:sonar -Dsonar.projectKey=alert-service -Dsonar.projectName='alert-service' -Dsonar.host.url=http://culturenaturevoyages.com:9000 -Dsonar.token=sqp_69586d07e81a9d0db0405ed899c1a6542dd1b7b3 -Dsonar.java.binaries=target -DskipTests
