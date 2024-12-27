@@ -10,26 +10,32 @@ import tensorflow as tf
 import geopy.distance
 from flask import Flask, jsonify, request, Response
 from py_eureka_client import eureka_client
+import socket
+from flask_cors import CORS
+
 
 # Flask app
 app = Flask(__name__)
 
+
+CORS(app, origins=["http://localhost:8080"], allow_headers=["Content-Type"], methods=["POST", "GET", "OPTIONS"])
+
 # Eureka configuration
 EUREKA_SERVER = "http://ace-eureka:8761/eureka/"
 EUREKA_APP_NAME = "ANOMALY-DETECTION-SERVICE"
-INSTANCE_HOST = "192.168.1.2"  # Accessible IP
-INSTANCE_PORT = 5000  # Flask port
+# Get the host IP dynamically
+INSTANCE_HOST = socket.gethostbyname(socket.gethostname())
+INSTANCE_PORT = 5000
 
 # Initialize Eureka client
 eureka_client.init(
     eureka_server=EUREKA_SERVER,
     app_name=EUREKA_APP_NAME,
-    instance_port=INSTANCE_PORT,
     instance_ip=INSTANCE_HOST,
+    instance_port=INSTANCE_PORT,
     region="default"
 )
-logging.info(f"Registered service {EUREKA_APP_NAME} with Eureka")
-
+logging.info(f"Registered service {EUREKA_APP_NAME} with Eureka at {INSTANCE_HOST}:{INSTANCE_PORT}")
 # Constants
 MODEL_DIR = "anomaly_detection/models"
 MODEL_PATH = os.path.join(MODEL_DIR, "autoencoder_model.keras")

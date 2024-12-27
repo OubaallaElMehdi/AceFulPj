@@ -19,7 +19,8 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 
 # Install additional Python packages
-RUN pip install pandas joblib flask tensorflow geopy scikit-learn py-eureka-client
+RUN pip install pandas joblib flask tensorflow geopy scikit-learn py-eureka-client flask-cors
+
 
 # Copy the project files into the container
 COPY . .

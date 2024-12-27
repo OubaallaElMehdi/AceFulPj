@@ -28,4 +28,6 @@ public class AlertService {
         alert.setTimestamp(LocalDateTime.now());
         return alertRepository.save(alert);
     }
+
+
 }

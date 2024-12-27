@@ -70,8 +70,10 @@ services:
     networks:
       - ace-network
     depends_on:
+      - gateway-service
       - kafka
       - vehicle-service
+      - ace-frontend
     environment:
       - KAFKA_BROKER=kafka:9092
       - VEHICLE_SERVICE_URL=http://vehicle-service:8081

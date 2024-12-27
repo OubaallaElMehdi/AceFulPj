@@ -1,22 +1,29 @@
 package com.ace.alertservice.ws;
 
 import com.ace.alertservice.entity.Alert;
+import com.ace.alertservice.repository.AlertRepository;
 import com.ace.alertservice.service.AlertService;
 import com.ace.alertservice.service.KafkaProducer;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 @RestController
 @RequestMapping("/alerts")
 public class AlertController {
 
     private final AlertService alertService;
     private final KafkaProducer kafkaProducer;
+    private final AlertRepository alertRepository;
 
-    public AlertController(AlertService alertService, KafkaProducer kafkaProducer) {
+    public AlertController(AlertService alertService, KafkaProducer kafkaProducer
+    , AlertRepository alertRepository) {
         this.alertService = alertService;
         this.kafkaProducer = kafkaProducer;
+        this.alertRepository = alertRepository;
+
     }
 
     @GetMapping("/{vehicleId}")
@@ -35,5 +42,14 @@ public class AlertController {
         kafkaProducer.sendMessage("alert-topic", message);
 
         return alert;
+    }
+    @GetMapping("/vehicle/{vehicleId}")
+    public Page<Alert> getAlertsByVehicle(
+            @PathVariable Long vehicleId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return alertRepository.findByVehicleId(vehicleId, pageable);
     }
 }
