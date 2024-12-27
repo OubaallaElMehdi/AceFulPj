@@ -15,21 +15,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 
-COPY ./anomaly_detection/models ./anomaly_detection/models
 
 # Install Python requirements (if you already have a requirements.txt)
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 # Install additional Python packages
+# Install Python packages
 RUN pip install pandas \
     && pip install joblib \
     && pip install flask \
     && pip install tensorflow \
     && pip install geopy \
     && pip install scikit-learn \
-
-RUN pip install py-eureka-client
+    && pip install py-eureka-client
 
 # Expose the Flask app port
 EXPOSE 5000

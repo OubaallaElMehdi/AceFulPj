@@ -184,18 +184,18 @@ services:
 
 
  #  Angular Frontend
-#  ace-frontend:
- #   build:
- #     context: ./AceFrontend
-  #  ports:
- #     - "4200:4200"
-  ##  container_name: ace-frontend
-  #  networks:
-  #    - ace-network
-  #  depends_on:
-  #    - gateway-service
-   # environment:
-  #    - NG_PROXY=http://gateway-service:8080
+  ace-frontend:
+    build:
+      context: ./next-ace-front
+    ports:
+      - "3000:3000"
+    container_name: ace-frontend
+    networks:
+      - ace-network
+    depends_on:
+      - gateway-service
+    environment:
+      - NG_PROXY=http://gateway-service:8080
 
 networks:
   ace-network:
