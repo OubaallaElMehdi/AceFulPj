@@ -9,7 +9,7 @@ on:
 jobs:
   # UserService Jobs
   user_service_compile_build:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -26,7 +26,7 @@ jobs:
           mvn clean verify package -DskipTests
 
   user_service_sonar_analysis:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     needs: user_service_compile_build
     steps:
       - name: Checkout Code
@@ -45,7 +45,7 @@ jobs:
 
   # AlertService Jobs
   alert_service_compile_build:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -62,7 +62,7 @@ jobs:
           mvn clean verify package -DskipTests
 
   alert_service_sonar_analysis:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     needs: alert_service_compile_build
     steps:
       - name: Checkout Code
@@ -81,7 +81,7 @@ jobs:
 
   # VehicleService Jobs
   vehicle_service_compile_build:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -98,7 +98,7 @@ jobs:
           mvn clean verify package -DskipTests
 
   vehicle_service_sonar_analysis:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     needs: vehicle_service_compile_build
     steps:
       - name: Checkout Code
@@ -117,7 +117,7 @@ jobs:
 
   # Next.js Frontend Jobs
   nextjs_build:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -134,7 +134,7 @@ jobs:
           npm run build
 
   nextjs_sonar_analysis:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     needs: nextjs_build
     steps:
       - name: Checkout Code
@@ -152,7 +152,7 @@ jobs:
 
   # AnomalyDetectionService Compile Job
   anomaly_detection_compile:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -174,20 +174,18 @@ jobs:
           python -m py_compile *.py */*.py
 
   anomaly_detection_sonar_analysis:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
+    needs: anomaly_detection_compile
     steps:
-      # Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Set up Java 17
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # Install Sonar Scanner
       - name: Install Sonar Scanner
         run: |
           sudo apt-get update
@@ -200,7 +198,6 @@ jobs:
           sudo chmod +x /opt/sonar-scanner/bin/sonar-scanner
           sudo ln -s /opt/sonar-scanner/bin/sonar-scanner /usr/bin/sonar-scanner
 
-      # Run SonarQube Analysis
       - name: Run SonarQube Analysis for AnomalyDetectionService
         env:
           JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64
