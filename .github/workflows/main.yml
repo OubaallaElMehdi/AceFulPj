@@ -26,4 +26,4 @@ jobs:
       - name: Run SonarQube Analysis
         run: |
           cd UserService
-          mvn clean verify sonar:sonar -Dsonar.projectKey=user-service -Dsonar.projectName='user-service' -Dsonar.token=sqp_862c9f2067fd262b055ea668fc002d028c7dc9d2 -DskipTests
+          mvn clean verify sonar:sonar -Dsonar.projectKey=user-service -Dsonar.projectName='user-service' -Dsonar.host.url=http://147.79.115.242:9000 -Dsonar.token=sqp_c6227f7f672e096aaa4b9104de81e72127fd93bf -DskipTests
