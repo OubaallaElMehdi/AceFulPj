@@ -4,6 +4,7 @@ const BASE_URL = process.env.REACT_APP_GATEWAY_URL || "http://localhost:8080";
 
 const AuthService = {
   login: async (username, password) => {
+    console.log(username, password)
     try {
       const response = await axios.post(`${BASE_URL}/userservice/auth/login`, {
         username,
