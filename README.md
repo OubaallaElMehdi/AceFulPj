@@ -343,6 +343,8 @@
        * Utilisez Docker Compose pour déployer en local ou sur un serveur distant.
        * Le projet est hébergé sur un serveur distant et accessible via le domaine :
             http://147.79.115.242:3000/
+       * SonarCloud est accessible pour l’analyse de code via :
+            http://culturenaturevoyages.com:9000
 
 
      
