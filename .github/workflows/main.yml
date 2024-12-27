@@ -176,15 +176,18 @@ jobs:
   anomaly_detection_sonar_analysis:
     runs-on: ubuntu-24.04
     steps:
+      # Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Java 17 (for SonarScanner)
+      # Set up Java 17
+      - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
+      # Install Sonar Scanner
       - name: Install Sonar Scanner
         run: |
           sudo apt-get update
@@ -192,11 +195,16 @@ jobs:
           curl -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
           unzip sonar-scanner.zip
           sudo mv sonar-scanner-4.8.0.2856-linux /opt/sonar-scanner
+          echo "export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64" | sudo tee -a /opt/sonar-scanner/bin/sonar-scanner
+          echo "export PATH=\$JAVA_HOME/bin:\$PATH" | sudo tee -a /opt/sonar-scanner/bin/sonar-scanner
+          sudo chmod +x /opt/sonar-scanner/bin/sonar-scanner
           sudo ln -s /opt/sonar-scanner/bin/sonar-scanner /usr/bin/sonar-scanner
 
+      # Run SonarQube Analysis
       - name: Run SonarQube Analysis for AnomalyDetectionService
         env:
-          SONAR_SCANNER_OPTS: "-Xmx2048m"
+          JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64
+          PATH: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64/bin:$PATH
         run: |
           cd AnomalyDetectionService
           sonar-scanner \
