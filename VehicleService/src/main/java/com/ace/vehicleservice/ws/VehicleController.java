@@ -5,7 +5,9 @@ import com.ace.vehicleservice.entity.Vehicle;
 import com.ace.vehicleservice.service.VehicleService;
 import com.ace.vehicleservice.service.KafkaProducerService;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,4 +53,13 @@ public class VehicleController {
 
         return vehicleDTOs;
     }
+
+    @GetMapping("/list")
+    public Page<Vehicle> getAllVehicles(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return vehicleService.findAll(pageable);
+    }
+
 }

@@ -7,28 +7,21 @@ WORKDIR /app
 # Copy the project files into the container
 COPY . .
 
+# Ensure the model files are available in the correct directory
 COPY ./anomaly_detection/models ./anomaly_detection/models
 
-# Update and install system dependencies (optional but useful for compatibility)
+# Update and install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-
-
-# Install Python requirements (if you already have a requirements.txt)
+# Install Python requirements (from requirements.txt)
 COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Install additional Python packages
-# Install Python packages
-RUN pip install pandas \
-    && pip install joblib \
-    && pip install flask \
-    && pip install tensorflow \
-    && pip install geopy \
-    && pip install scikit-learn \
-    && pip install py-eureka-client
+RUN pip install pandas joblib flask tensorflow geopy scikit-learn py-eureka-client
 
 # Expose the Flask app port
 EXPOSE 5000
