@@ -1,13 +1,44 @@
 version: '3.8'
 
 services:
+  # ---------------------
+  # Prometheus
+  # ---------------------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - ace-network
+    restart: always
+
+  # ---------------------
+  # Grafana
+  # ---------------------
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    networks:
+      - ace-network
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    restart: always
+
+  # ---------------------
   # Eureka Service Registry
+  # ---------------------
   eureka-server:
     build:
       context: ./Ace-Eureka
+    container_name: ace-eureka
     ports:
       - "8761:8761"
-    container_name: ace-eureka
     networks:
       - ace-network
     environment:
@@ -15,6 +46,9 @@ services:
       - EUREKA_CLIENT_FETCH_REGISTRY=false
     restart: always
 
+  # ---------------------
+  # Zookeeper
+  # ---------------------
   zookeeper:
     image: bitnami/zookeeper:latest
     container_name: zookeeper
@@ -25,33 +59,38 @@ services:
     networks:
       - ace-network
 
+  # ---------------------
+  # Kafka
+  # ---------------------
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
     ports:
-      - "9092:9092" # Internal and external communication
-      - "29092:29092" # Host access
+      - "9092:9092"
+      - "29092:29092"
     environment:
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     depends_on:
       - zookeeper
     networks:
       - ace-network
     restart: always
 
+  # ---------------------
   # Gateway Service
+  # ---------------------
   gateway-service:
     build:
       context: ./Ace-Gateway
+    container_name: ace-gateway
     ports:
       - "8080:8080"
-    container_name: ace-gateway
     networks:
       - ace-network
     depends_on:
@@ -60,13 +99,15 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://ace-eureka:8761/eureka
       - SPRING_PROFILES_ACTIVE=docker
 
-      #   Anomaly Detection Service
+  # ---------------------
+  # Anomaly Detection Service
+  # ---------------------
   anomaly-detection-service:
     build:
       context: ./AnomalyDetectionService
+    container_name: anomaly-detection-service
     ports:
       - "5000:5000"
-    container_name: anomaly-detection-service
     networks:
       - ace-network
     depends_on:
@@ -78,13 +119,15 @@ services:
       - KAFKA_BROKER=kafka:9092
       - VEHICLE_SERVICE_URL=http://vehicle-service:8081
 
+  # ---------------------
   # Vehicle Service
+  # ---------------------
   vehicle-service:
     build:
       context: ./VehicleService
+    container_name: vehicle-service
     ports:
       - "8081:8081"
-    container_name: vehicle-service
     networks:
       - ace-network
     depends_on:
@@ -97,17 +140,23 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:mysql://vehicle-db:3306/vehicle_service
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_PASSWORD=vehicle_root_pass
       - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka:9092
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      timeout: 10s
+      retries: 3
 
+  # ---------------------
   # User Service
+  # ---------------------
   user-service:
     build:
       context: ./UserService
+    container_name: user-service
     ports:
       - "8082:8082"
-    container_name: user-service
     networks:
       - ace-network
     depends_on:
@@ -120,16 +169,23 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:mysql://user-db:3306/user_service
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_PASSWORD=user_root_pass
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
+  # ---------------------
   # Alert Service
+  # ---------------------
   alert-service:
     build:
       context: ./AlertService
+    container_name: alert-service
     ports:
       - "8083:8083"
-    container_name: alert-service
     networks:
       - ace-network
     depends_on:
@@ -142,56 +198,112 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:mysql://alert-db:3306/alert_service
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_PASSWORD=alert_root_pass
     restart: always
-  # MySQL for Vehicle Service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ---------------------
+  # MySQL Databases
+  # ---------------------
   vehicle-db:
     image: mysql:8
     container_name: vehicle-db
+    ports:
+      - "3307:3306"
     networks:
       - ace-network
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=vehicle_root_pass
       - MYSQL_DATABASE=vehicle_service
-    ports:
-      - "3307:3306"
     volumes:
       - ./vehicle_service.sql:/docker-entrypoint-initdb.d/vehicle_service.sql
 
-  # MySQL for User Service
   user-db:
     image: mysql:8
     container_name: user-db
+    ports:
+      - "3308:3306"
     networks:
       - ace-network
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=user_root_pass
       - MYSQL_DATABASE=user_service
-    ports:
-      - "3308:3306"
 
-  # MySQL for Alert Service
   alert-db:
     image: mysql:8
     container_name: alert-db
+    ports:
+      - "3309:3306"
     networks:
       - ace-network
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=alert_root_pass
       - MYSQL_DATABASE=alert_service
+
+  # ---------------------
+  # phpMyAdmin Interfaces
+  # ---------------------
+  phpmyadmin-vehicle:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin-vehicle
+    depends_on:
+      - vehicle-db
     ports:
-      - "3309:3306"
+      - "8181:80"
+    environment:
+      PMA_HOST: vehicle-db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: vehicle_root_pass
+    networks:
+      - ace-network
+    restart: always
 
+  phpmyadmin-user:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin-user
+    depends_on:
+      - user-db
+    ports:
+      - "8282:80"
+    environment:
+      PMA_HOST: user-db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: user_root_pass
+    networks:
+      - ace-network
+    restart: always
 
+  phpmyadmin-alert:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin-alert
+    depends_on:
+      - alert-db
+    ports:
+      - "8383:80"
+    environment:
+      PMA_HOST: alert-db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: alert_root_pass
+    networks:
+      - ace-network
+    restart: always
 
-
- #  Angular Frontend
+  # ---------------------
+  # Angular Frontend
+  # ---------------------
   ace-frontend:
     build:
       context: ./next-ace-front
+    container_name: ace-frontend
     ports:
       - "3000:3000"
-    container_name: ace-frontend
     networks:
       - ace-network
     depends_on:
@@ -199,41 +311,53 @@ services:
     environment:
       - NG_PROXY=http://gateway-service:8080
 
-
-#SonarQube
+  # ---------------------
+  # SonarQube
+  # ---------------------
   sonarqube:
-    image: ${SONARQUBE_IMAGE_NAME}
-    restart: unless-stopped
+    image: sonarqube:latest
+    container_name: sonarqube
     ports:
-      - "9000:${SONARQUBE_PORT}"
+      - "9000:9000"
     volumes:
       - sonarqube_data:/opt/sonarqube/data
-    environment:
-      - SONARQUBE_JDBC_URL=${SONARQUBE_JDBC_URL}
-      - SONARQUBE_JDBC_USERNAME=${SONARQUBE_JDBC_USERNAME}
-      - SONARQUBE_JDBC_PASSWORD=${SONARQUBE_JDBC_PASSWORD}
-    depends_on:
-      - sonarqube-db
     networks:
       - ace-network
+    restart: unless-stopped
 
   sonarqube-db:
     image: postgres
-    restart: unless-stopped
+    container_name: sonarqube-db
     environment:
-      - POSTGRES_DB=${SONARQUBE_DB_NAME}
-      - POSTGRES_USER=${SONARQUBE_DB_USER}
-      - POSTGRES_PASSWORD=${SONARQUBE_DB_PASSWORD}
+      - POSTGRES_DB=sonarqube
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar_pass
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - ace-network
+    restart: unless-stopped
+
+  # ---------------------
+  # Portainer
+  # ---------------------
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    ports:
+      - "9001:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - ace-network
+    restart: always
 
 volumes:
   sonarqube_data:
   postgres_data:
+  portainer_data:
 
 networks:
   ace-network:
     driver: bridge
-

@@ -35,7 +35,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/register").permitAll() // Autoriser l'inscription et la connexion
+                        .requestMatchers("/auth/login", "/auth/register", "/actuator/**").permitAll() // Autoriser l'inscription et la connexion
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Réservé aux admins
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Accessible aux utilisateurs et admins
                         .anyRequest().authenticated() // Sécuriser les autres endpoints
