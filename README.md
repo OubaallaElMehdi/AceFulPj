@@ -40,10 +40,10 @@
   # 1. Structure du projet
    Le projet est construit selon une architecture microservices, chaque microservice gère une fonctionnalité spécifique, voici les principaux composants :
    
-        * Ace-Gateway (Spring boot)
+        * Ace-Gateway (Spring Cloud)
          Service de passerelle API
          
-        * Ace-Eureka (Spring boot)
+        * Ace-Eureka (Spring Cloud)
          Service de découverte et registre des services
          
         * AnomalyDetectionService (Python)
@@ -94,8 +94,9 @@
         Registre de services : Eureka
         API Gateway : Spring Cloud Gateway
         Machine Learning : Implémentation dans Anomaly Detection Service
-        CI/CD : Jenkins
-        Analyse de code : SonarCloud
+        CI/CD : Github actions
+        Analyse de code : SonarQube
+        Surveillance : Prometheus et Grafana
         
    # 3.	Conteneurisation et déploiement  
    
@@ -103,8 +104,9 @@
    
       * Définition des fichiers Dockerfile pour chaque service.
       * Configuration de docker-compose.yml pour démarrer tous les services simultanément.
-      * Mise en place des pipelines CI/CD avec Jenkins pour automatiser les tests, la construction des images Docker, et le déploiement.
-      * Intégration de SonarCloud pour assurer la qualité du code.
+      * Mise en place des pipelines CI/CD avec GitHub actions pour automatiser les tests, la construction des images Docker, et le déploiement.
+      * Intégration de SonarQube pour assurer la qualité et la sécurité du code.
+      * Intégration de Grafana et Prometheus pour la surveillance des microservices.
       
    # 3.1 Configuration Docker
 
@@ -381,7 +383,7 @@ networks:
    # 2. Interface utilisateur
      L’interface utilisateur permet :
      * La visualisation des trajectoires des véhicules en temps réel.
-     * La gestion des utilisateurs et des rôles.
+     * La gestion des utilisateurs.
      * L’affichage des alertes et des anomalies détectées.
   #  IV.	Guide d'installation
    # 1.	Prérequis
@@ -389,8 +391,8 @@ networks:
 
        * Python 3.10
        * Java JDK 17 ou supérieur et Maven pour les services backend
-       * Node.js 16.x ou supérieur
-       * Docker et Docker Compose installés
+       * Node.js 22.x ou supérieur
+       * Docker installé
        * Git
        
    # 2.  Installation et configuration
@@ -401,13 +403,13 @@ networks:
        * Naviguez vers le répertoire du projet :
            cd AceFulPj
        * Construisez et lancez les conteneurs Docker :
-           docker-compose up --build
-       * Configurez Jenkins pour exécuter les pipelines de construction et de déploiement.
+           docker-compose up
+       * Configurez GitHub actions pour exécuter les pipelines de compilation, construction et de déploiement.
    # 3.  Déploiement
        * Utilisez Docker Compose pour déployer en local ou sur un serveur distant.
        * Le projet est hébergé sur un serveur distant et accessible via le domaine :
-            http://147.79.115.242:3000/
-       * SonarCloud est accessible pour l’analyse de code via :
+            http://culturenaturevoyages.com:3000/
+       * SonarQube est accessible pour l’analyse de code via :
             http://culturenaturevoyages.com:9000
 
 
