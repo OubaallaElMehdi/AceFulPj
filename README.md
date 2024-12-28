@@ -515,4 +515,5 @@ networks:
             http://culturenaturevoyages.com:9000
 
 
-     
+[![Watch the demo video](https://yourserver.com/path/to/thumbnail.jpg)](http://culturenaturevoyages.com:1234/ace-demo.mp4)
+
