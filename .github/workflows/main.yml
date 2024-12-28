@@ -175,7 +175,7 @@ jobs:
 
   anomaly_detection_sonar_analysis:
     runs-on: self-hosted
-    #needs: anomaly_detection_compile
+    needs: anomaly_detection_compile
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
