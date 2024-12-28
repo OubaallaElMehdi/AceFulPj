@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_GATEWAY_URL || "http://147.79.115.242:8080/vehicleservice/api";
+const BASE_URL = process.env.REACT_APP_GATEWAY_URL || "http://147.79.115.242:8081/api";
 
 const TrajectoryService = {
     getTrajectoriesByVehicle: async (vehicleId, page = 0, size = 10) => {

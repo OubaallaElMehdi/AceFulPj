@@ -30,7 +30,7 @@ services:
   # Eureka Service Registry
   eureka-server:
     build:
-      context: ./Ace-Eureka
+      context: ./../Ace-Eureka
     ports:
       - "8761:8761"
     container_name: ace-eureka
@@ -74,7 +74,7 @@ services:
   # Gateway Service
   gateway-service:
     build:
-      context: ./Ace-Gateway
+      context: ./../Ace-Gateway
     ports:
       - "8080:8080"
     container_name: ace-gateway
@@ -89,7 +89,7 @@ services:
       #   Anomaly Detection Service
   anomaly-detection-service:
     build:
-      context: ./AnomalyDetectionService
+      context: ./../AnomalyDetectionService
     ports:
       - "5000:5000"
     container_name: anomaly-detection-service
@@ -107,7 +107,7 @@ services:
   # Vehicle Service
   vehicle-service:
     build:
-      context: ./VehicleService
+      context: ./../VehicleService
     ports:
       - "8081:8081"
     container_name: vehicle-service
@@ -130,7 +130,7 @@ services:
   # User Service
   user-service:
     build:
-      context: ./UserService
+      context: ./../UserService
     ports:
       - "8082:8082"
     container_name: user-service
@@ -152,7 +152,7 @@ services:
   # Alert Service
   alert-service:
     build:
-      context: ./AlertService
+      context: ./../AlertService
     ports:
       - "8083:8083"
     container_name: alert-service
@@ -214,7 +214,7 @@ services:
  #  Angular Frontend
   ace-frontend:
     build:
-      context: ./next-ace-front
+      context: ./../next-ace-front
     ports:
       - "3000:3000"
     container_name: ace-frontend
