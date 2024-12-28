@@ -476,8 +476,6 @@ volumes:
 networks:
   ace-network:
     driver: bridge
-```yaml
-
 
   # III.  Fonctionnalités
    # 1. Génération de code
