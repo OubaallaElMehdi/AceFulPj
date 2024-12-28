@@ -477,8 +477,7 @@ networks:
   ace-network:
     driver: bridge
 
-```yaml
-
+```
   # III.  Fonctionnalités
    # 1. Génération de code
      * Les services backend sont générés avec des outils comme Spring Boot Initializer.
