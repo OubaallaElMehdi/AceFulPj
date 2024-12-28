@@ -14,18 +14,6 @@ public class VehicleServiceApplication {
 		SpringApplication.run(VehicleServiceApplication.class, args);
 	}
 
-	@Bean
-	public CorsWebFilter corsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-		CorsConfiguration config = new CorsConfiguration();
-		config.addAllowedOrigin("http://localhost:3000"); // Allow only your frontend origin
-		config.addAllowedMethod("*"); // Allow all HTTP methods
-		config.addAllowedHeader("*"); // Allow all headers
-		config.setAllowCredentials(true); // Allow cookies or credentials
-
-		source.registerCorsConfiguration("/**", config);
-		return new CorsWebFilter(source);
-	}
 
 }

@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_GATEWAY_URL || "http://localhost:8080";
+const BASE_URL = process.env.REACT_APP_GATEWAY_URL || "http://147.79.115.242:8080";
 
 const MapService = {
     getVehicles: async () => {
@@ -19,7 +19,7 @@ const MapService = {
     getTrajectoriesByCarAndDate: async (vehicleId, date) => {
         try {
             const response = await fetch(
-                `http://localhost:8081/api/trajectories/vehicle/${vehicleId}/date/${date}`,
+                `http://147.79.115.242:8081/api/trajectories/vehicle/${vehicleId}/date/${date}`,
                 {
                     method: "GET",
                 }
