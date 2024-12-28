@@ -515,5 +515,5 @@ networks:
             http://culturenaturevoyages.com:9000
 
 
-[Watch the demo video](http://culturenaturevoyages.com:1234/ace-demo.mp4)
+[Watch the demo video](https://www.youtube.com/watch?v=EF6fqnnl3Uk)
 
