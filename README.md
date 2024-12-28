@@ -110,6 +110,7 @@
       
    # 3.1 Configuration Docker Compose
 
+```yaml
 version: '3.8'
 
 services:
@@ -475,7 +476,7 @@ volumes:
 networks:
   ace-network:
     driver: bridge
-
+```yaml
 
 
   # III.  Fonctionnalités
