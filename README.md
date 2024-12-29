@@ -515,5 +515,4 @@ networks:
             http://culturenaturevoyages.com:9000
 
 
-[Watch the demo video](https://www.youtube.com/watch?v=EF6fqnnl3Uk)
-
+[Video-Demo](https://github.com/user-attachments/assets/dc3614e9-4bf7-46d8-b98a-8fdffbbdc40d)
